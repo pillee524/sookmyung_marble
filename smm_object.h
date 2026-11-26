@@ -45,18 +45,21 @@
 #define SMMGRADE_CP     6
 #define SMMGRADE_C0     7
 #define SMMGRADE_CM     8
+#define SMMOBJ_TYPE_BOARD   0
+#define SMMOBJ_TYPE_GRADE   1
 
 
 //object generation
-void smmObj_genNode(char* name, int type, int credit, int energy);
+void* smmObj_genObject(char* name, int objType, int type, int credit, int energy, int grade);
 void smmObj_genFood(char* name, int energy);
 void smmObj_genFestival(char* msg);
 
 //member retrieving
-char* smmObj_getNodeName(int node_nr);
-int smmObj_getNodeType(int node_nr);
-int smmObj_getNodeCredit(int node_nr);
-int smmObj_getNodeEnergy(int node_nr);
+char* smmObj_getObjectName(void* obj);
+int smmObj_getObjectType(void* obj);
+int smmObj_getObjectCredit(void* obj);
+int smmObj_getObjectEnergy(void* obj);
+int smmObj_getObjectGrade(void* obj);
 char* smmObj_getFoodName(int nr);
 int smmObj_getFoodEnergy(int nr);
 char* smmObj_getFestivalMsg(int nr);

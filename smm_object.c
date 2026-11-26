@@ -27,13 +27,12 @@ static char smmGradeName[MAX_GRADE][MAX_CHARNAME] = {
 
 typedef struct smmObject {
     char name[MAX_CHARNAME];
+    int objType;    // 보드칸인지 성적인지 (SMMOBJ_TYPE_BOARD / SMMOBJ_TYPE_GRADE)
     int type;
     int credit;
     int energy;
+    int grade;      // 성적 (SMMGRADE_AP ~ SMMGRADE_CM)
 } smmObject_t;
-
-static smmObject_t smm_node[MAX_NODE];
-static int smmObj_noNode = 0;
 
 static char smmObj_foodName[MAX_NODE][MAX_CHARNAME];
 static int smmObj_foodEnergy[MAX_NODE];
@@ -43,13 +42,25 @@ static char smmObj_festMsg[MAX_NODE][MAX_CHARNAME];
 static int smmObj_noFest = 0;
 
 //object generation
-void smmObj_genNode(char* name, int type, int credit, int energy)
+void* smmObj_genObject(char* name, int objType, int type, int credit, int energy, int grade)
 {
-    strcpy(smm_node[smmObj_noNode].name, name);
-    smm_node[smmObj_noNode].type = type;
-    smm_node[smmObj_noNode].credit = credit;
-    smm_node[smmObj_noNode].energy = energy;
-    smmObj_noNode++;
+    smmObject_t* ptr;
+
+    ptr = (smmObject_t*)malloc(sizeof(smmObject_t));
+    if (ptr == NULL)
+    {
+        printf("[ERROR] smmObj_genObject() : malloc failed!\n");
+        return NULL;
+    }
+
+    strcpy(ptr->name, name);
+    ptr->objType = objType;
+    ptr->type = type;
+    ptr->credit = credit;
+    ptr->energy = energy;
+    ptr->grade = grade;
+
+    return (void*)ptr;
 }
 
 void smmObj_genFood(char* name, int energy)
@@ -66,10 +77,36 @@ void smmObj_genFestival(char* msg)
 }
 
 //member retrieving
-char* smmObj_getNodeName(int node_nr)  { return smm_node[node_nr].name; }
-int smmObj_getNodeType(int node_nr)    { return smm_node[node_nr].type; }
-int smmObj_getNodeCredit(int node_nr)  { return smm_node[node_nr].credit; }
-int smmObj_getNodeEnergy(int node_nr)  { return smm_node[node_nr].energy; }
+char* smmObj_getObjectName(void* obj)
+{
+    smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->name;
+}
+
+int smmObj_getObjectType(void* obj)
+{
+    smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->type;
+}
+
+int smmObj_getObjectCredit(void* obj)
+{
+    smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->credit;
+}
+
+int smmObj_getObjectEnergy(void* obj)
+{
+    smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->energy;
+}
+
+int smmObj_getObjectGrade(void* obj)
+{
+    smmObject_t* ptr = (smmObject_t*)obj;
+    return ptr->grade;
+}
+
 char* smmObj_getFoodName(int nr)       { return smmObj_foodName[nr]; }
 int smmObj_getFoodEnergy(int nr)       { return smmObj_foodEnergy[nr]; }
 char* smmObj_getFestivalMsg(int nr)    { return smmObj_festMsg[nr]; }
@@ -84,4 +121,3 @@ char* smmObj_getGradeName(int grade)
 {
     return smmGradeName[grade];
 }
-
